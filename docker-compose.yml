@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  esc-guard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: esc-question
+    volumes:
+      - ./:/process
+      - /process/node_modules
+    ports:
+      - "3335:3335"
+    env_file:
+      - .env
+    networks:
+      - esc-network
+    restart: on-failure
+
+networks:
+  esc-netword:
+    external:
+      name: esc-network
