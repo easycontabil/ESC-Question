@@ -8,7 +8,6 @@ import {
 } from 'typeorm'
 
 import { Doubt } from './Doubt'
-import { User } from './User'
 
 @Entity('esc_doubt_reactions')
 export class DoubtReaction {
@@ -36,10 +35,4 @@ export class DoubtReaction {
     doubt => doubt.doubtReactions,
   )
   doubt: Doubt
-
-  @ManyToOne(
-    () => User,
-    user => user.answers,
-  )
-  user: User
 }

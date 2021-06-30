@@ -5,24 +5,31 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  ManyToOne,
 } from 'typeorm'
 
 import { Answer } from './Answer'
 import { Category } from './Category'
 import { DoubtReaction } from './DoubtReaction'
-import { User } from './User'
 
 @Entity('esc_doubts')
 export class Doubt {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
+  @Column({ type: 'uuid' })
+  userId: string
+
+  @Column()
+  solved?: boolean
+
   @Column()
   title: string
 
   @Column()
   description: string
+
+  @Column({ name: 'closed_at' })
+  closedAt: Date
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date
@@ -54,10 +61,4 @@ export class Doubt {
     category => category.doubt,
   )
   categories: Category[]
-
-  @ManyToOne(
-    () => User,
-    user => user.answers,
-  )
-  user: User
 }

@@ -7,9 +7,14 @@ import { Options } from 'app/Decorators/Services/Options'
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { CommentRepository } from 'app/Repositories/CommentRepository'
 import { ApiRequestContract, PaginationContract } from '@secjs/contracts'
+import { GuardBaseService } from '@secjs/base'
+import { AnswerService } from './AnswerService'
 
 @Injectable()
-export class CommentService {
+export class CommentService extends GuardBaseService<any> {
+  @Inject(AnswerService)
+  private answerService: AnswerService
+
   @Inject(CommentRepository)
   private commentRepository: CommentRepository
 
@@ -30,7 +35,9 @@ export class CommentService {
   }
 
   async createOne(dto: CreateCommentDto) {
-    return this.commentRepository.storeOne(dto)
+    const answer = await this.answerService.findOne(dto.answerId)
+
+    return this.commentRepository.storeOne({ answer, content: dto.content })
   }
 
   async updateOne(id: string, dto: UpdateCommentDto) {

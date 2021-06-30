@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common'
 
 import {
@@ -21,9 +22,12 @@ import { CommentService } from 'app/Services/Api/CommentService'
 import { QueryParamsPipe } from 'app/Pipes/QueryParamsPipe'
 import { Pagination } from 'app/Decorators/Http/Pagination'
 import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
+import { UserGuard } from '../Guards/UserGuard'
+import { User } from '../../Decorators/Http/User'
 
 @ApiTags('Comment')
 @Controller('comments')
+@UseGuards(UserGuard)
 export class CommentController {
   @Inject(CommentService)
   private commentService: CommentService
@@ -39,8 +43,8 @@ export class CommentController {
   }
 
   @Post()
-  async store(@Body(PipeValidator) body: CreateCommentDto) {
-    return this.commentService.createOne(body)
+  async store(@User() user, @Body(PipeValidator) body: CreateCommentDto) {
+    return this.commentService.setGuard(user).createOne(body)
   }
 
   @Get('/:id')

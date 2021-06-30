@@ -1,13 +1,23 @@
 import { CreateAnswerDto, UpdateAnswerDto } from 'app/Contracts/Dtos/AnswerDto'
 
 import { Options } from 'app/Decorators/Services/Options'
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { AnswerRepository } from 'app/Repositories/AnswerRepository'
 import { ApiRequestContract, PaginationContract } from '@secjs/contracts'
 import { AnswerReactionRepository } from '../../Repositories/AnswerReactionRepository'
+import { GuardBaseService } from '@secjs/base'
+import { DoubtService } from './DoubtService'
 
 @Injectable()
-export class AnswerService {
+export class AnswerService extends GuardBaseService<any> {
+  @Inject(DoubtService)
+  private doubtService: DoubtService
+
   @Inject(AnswerRepository)
   private answerRepository: AnswerRepository
 
@@ -31,23 +41,74 @@ export class AnswerService {
   }
 
   async createOne(dto: CreateAnswerDto) {
-    return this.answerRepository.storeOne(dto)
+    const user = this.guard
+
+    const doubt = await this.doubtService.findOne(dto.doubtId)
+
+    if (doubt.userId === user.id) {
+      throw new BadRequestException(
+        'Um usuário não pode responder a própria dúvida',
+      )
+    }
+
+    const respostaRepetida = await this.answerRepository.getOne(null, {
+      where: {
+        userId: user.id,
+        doubtId: doubt.id,
+      },
+    })
+
+    if (respostaRepetida) {
+      throw new BadRequestException(
+        'Um usuário não pode responder mais de uma vez a mesma dúvida',
+      )
+    }
+
+    return this.answerRepository.storeOne({ doubt, content: dto.content })
   }
 
   async updateOne(id: string, dto: UpdateAnswerDto) {
+    const user = this.guard
+
     const answer = await this.findOne(id, {
       includes: [{ relation: 'answerReactions' }],
     })
 
     if (dto.answerReaction) {
+      if (answer.userId === user.id) {
+        throw new BadRequestException(
+          'Um usuário não pode reagir a sua própria resposta',
+        )
+      }
+
       delete dto.solved
       delete dto.content
 
-      const answerReaction = await this.answerReactionRepository.storeOne({
-        liked: dto.answerReaction.liked,
-      })
+      const repeatedReaction = await this.answerReactionRepository.getOne(
+        null,
+        {
+          where: {
+            answerId: id,
+            userId: user.id,
+          },
+        },
+      )
 
-      answer.answerReactions.push(answerReaction)
+      if (repeatedReaction) {
+        repeatedReaction.liked = dto.answerReaction.liked
+
+        // await this.answerReactionRepository.save(repeatedReaction)
+
+        answer.answerReactions.push(repeatedReaction)
+      } else {
+        const answerReaction = await this.answerReactionRepository.storeOne({
+          userId: user.id,
+          answerId: answer.id,
+          liked: dto.answerReaction.liked,
+        })
+
+        answer.answerReactions.push(answerReaction)
+      }
     }
 
     return this.answerRepository.updateOne(answer, dto)

@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common'
 
 import { CreateDoubtDto, UpdateDoubtDto } from 'app/Contracts/Dtos/DoubtDto'
@@ -18,9 +19,12 @@ import { DoubtService } from 'app/Services/Api/DoubtService'
 import { QueryParamsPipe } from 'app/Pipes/QueryParamsPipe'
 import { Pagination } from 'app/Decorators/Http/Pagination'
 import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
+import { UserGuard } from 'app/Http/Guards/UserGuard'
+import { User } from '../../Decorators/Http/User'
 
 @ApiTags('Doubt')
 @Controller('doubts')
+@UseGuards(UserGuard)
 export class DoubtController {
   @Inject(DoubtService)
   private doubtService: DoubtService
@@ -36,8 +40,8 @@ export class DoubtController {
   }
 
   @Post()
-  async store(@Body(PipeValidator) body: CreateDoubtDto) {
-    return this.doubtService.createOne(body)
+  async store(@User() user, @Body(PipeValidator) body: CreateDoubtDto) {
+    return this.doubtService.setGuard(user).createOne(body)
   }
 
   @Get('/:id')
@@ -49,10 +53,11 @@ export class DoubtController {
   @Put('/:id')
   @ApiParam({ name: 'id' })
   async update(
+    @User() user,
     @Param() params: any,
     @Body(PipeValidator) body: UpdateDoubtDto,
   ) {
-    return this.doubtService.updateOne(params.id, body)
+    return this.doubtService.setGuard(user).updateOne(params.id, body)
   }
 
   @Delete('/:id')

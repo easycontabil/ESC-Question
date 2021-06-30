@@ -8,7 +8,6 @@ import {
   ManyToOne,
 } from 'typeorm'
 
-import { User } from './User'
 import { Doubt } from './Doubt'
 import { Comment } from './Comment'
 import { AnswerReaction } from './AnswerReaction'
@@ -17,6 +16,9 @@ import { AnswerReaction } from './AnswerReaction'
 export class Answer {
   @PrimaryGeneratedColumn('uuid')
   id: string
+
+  @Column({ type: 'uuid' })
+  userId: string
 
   @Column({ default: false })
   solved?: boolean
@@ -54,10 +56,4 @@ export class Answer {
     comment => comment.answer,
   )
   comments: Comment[]
-
-  @ManyToOne(
-    () => User,
-    user => user.answers,
-  )
-  user: User
 }

@@ -3,10 +3,16 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateCommentDto {
   static schema = Joi.object({
+    answerId: Joi.string()
+      .alphanum()
+      .required(),
     content: Joi.string()
       .alphanum()
       .required(),
   })
+
+  @ApiProperty()
+  answerId: string
 
   @ApiProperty()
   content: string

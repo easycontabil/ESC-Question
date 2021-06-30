@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common'
 
 import { PaginationContract } from '@secjs/contracts'
@@ -17,9 +18,12 @@ import { QueryParamsPipe } from 'app/Pipes/QueryParamsPipe'
 import { Pagination } from 'app/Decorators/Http/Pagination'
 import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { CreateAnswerDto, UpdateAnswerDto } from 'app/Contracts/Dtos/AnswerDto'
+import { UserGuard } from '../Guards/UserGuard'
+import { User } from '../../Decorators/Http/User'
 
 @ApiTags('Answer')
 @Controller('answers')
+@UseGuards(UserGuard)
 export class AnswerController {
   @Inject(AnswerService)
   private answerService: AnswerService
@@ -35,8 +39,8 @@ export class AnswerController {
   }
 
   @Post()
-  async store(@Body(PipeValidator) body: CreateAnswerDto) {
-    return this.answerService.createOne(body)
+  async store(@User() user, @Body(PipeValidator) body: CreateAnswerDto) {
+    return this.answerService.setGuard(user).createOne(body)
   }
 
   @Get('/:id')
@@ -48,10 +52,11 @@ export class AnswerController {
   @Put('/:id')
   @ApiParam({ name: 'id' })
   async update(
+    @User() user,
     @Param() params: any,
     @Body(PipeValidator) body: UpdateAnswerDto,
   ) {
-    return this.answerService.updateOne(params.id, body)
+    return this.answerService.setGuard(user).updateOne(params.id, body)
   }
 
   @Delete('/:id')

@@ -9,7 +9,6 @@ import {
 
 import { Answer } from './Answer'
 import { Category } from './Category'
-import { User } from './User'
 
 @Entity('esc_answer_reactions')
 export class AnswerReaction {
@@ -49,10 +48,4 @@ export class AnswerReaction {
 
   @ManyToOne(() => Category)
   category: Category
-
-  @ManyToOne(
-    () => User,
-    user => user.answers,
-  )
-  user: User
 }

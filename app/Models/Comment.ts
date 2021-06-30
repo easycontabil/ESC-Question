@@ -9,12 +9,14 @@ import {
 } from 'typeorm'
 
 import { Answer } from './Answer'
-import { User } from './User'
 
 @Entity('esc_comments')
 export class Comment {
   @PrimaryGeneratedColumn('uuid')
   id: string
+
+  @Column({ type: 'uuid' })
+  userId: string
 
   @Column()
   content: string
@@ -40,10 +42,4 @@ export class Comment {
 
   @OneToOne(() => Comment)
   comment: Comment
-
-  @ManyToOne(
-    () => User,
-    user => user.answers,
-  )
-  user: User
 }
