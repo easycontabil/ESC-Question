@@ -5,6 +5,7 @@ import {
   HttpService,
   Inject,
 } from '@nestjs/common'
+import Env from '@secjs/env'
 
 @Injectable()
 export class UserGuard implements CanActivate {
@@ -17,7 +18,7 @@ export class UserGuard implements CanActivate {
     const token = request.header('Authorization')
 
     const { data } = await this.httpService
-      .get(`http://localhost:3000/grd/auth/me`, {
+      .get(Env('GUARD_API', 'http://localhost:3000/grd/auth/me'), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
