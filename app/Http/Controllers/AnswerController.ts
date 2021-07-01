@@ -16,11 +16,12 @@ import { PipeValidator } from 'app/Pipes/PipeValidator'
 import { AnswerService } from 'app/Services/Api/AnswerService'
 import { QueryParamsPipe } from 'app/Pipes/QueryParamsPipe'
 import { Pagination } from 'app/Decorators/Http/Pagination'
-import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { CreateAnswerDto, UpdateAnswerDto } from 'app/Contracts/Dtos/AnswerDto'
 import { UserGuard } from '../Guards/UserGuard'
 import { User } from '../../Decorators/Http/User'
 
+@ApiBearerAuth()
 @ApiTags('Answer')
 @Controller('answers')
 @UseGuards(UserGuard)

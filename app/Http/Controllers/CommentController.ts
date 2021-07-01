@@ -21,10 +21,11 @@ import { PipeValidator } from 'app/Pipes/PipeValidator'
 import { CommentService } from 'app/Services/Api/CommentService'
 import { QueryParamsPipe } from 'app/Pipes/QueryParamsPipe'
 import { Pagination } from 'app/Decorators/Http/Pagination'
-import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { UserGuard } from '../Guards/UserGuard'
 import { User } from '../../Decorators/Http/User'
 
+@ApiBearerAuth()
 @ApiTags('Comment')
 @Controller('comments')
 @UseGuards(UserGuard)
