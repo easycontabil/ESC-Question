@@ -1,6 +1,6 @@
 import { CreateDoubtDto, UpdateDoubtDto } from 'app/Contracts/Dtos/DoubtDto'
 
-import { GuardBaseService } from '@secjs/base'
+import { GuardBaseService } from '@secjs/base/services/GuardBaseService'
 import { Options } from 'app/Decorators/Services/Options'
 import {
   BadRequestException,

@@ -10,7 +10,7 @@ import {
 import { AnswerRepository } from 'app/Repositories/AnswerRepository'
 import { ApiRequestContract, PaginationContract } from '@secjs/contracts'
 import { AnswerReactionRepository } from '../../Repositories/AnswerReactionRepository'
-import { GuardBaseService } from '@secjs/base'
+import { GuardBaseService } from '@secjs/base/services/GuardBaseService'
 import { DoubtService } from './DoubtService'
 
 @Injectable()

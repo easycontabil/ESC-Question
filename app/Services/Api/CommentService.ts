@@ -7,7 +7,7 @@ import { Options } from 'app/Decorators/Services/Options'
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { CommentRepository } from 'app/Repositories/CommentRepository'
 import { ApiRequestContract, PaginationContract } from '@secjs/contracts'
-import { GuardBaseService } from '@secjs/base'
+import { GuardBaseService } from '@secjs/base/services/GuardBaseService'
 import { AnswerService } from './AnswerService'
 
 @Injectable()
