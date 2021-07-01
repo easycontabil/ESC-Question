@@ -27,6 +27,6 @@ export class Keyword {
    * Relations
    */
 
-  @ManyToOne(() => Category)
+  @ManyToOne(() => Category, { nullable: true })
   category: Category
 }

@@ -32,7 +32,7 @@ export class Answer {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date
 
-  @UpdateDateColumn({ name: 'deleted_at' })
+  @Column({ name: 'deleted_at', default: null })
   deletedAt: Date
 
   /*

@@ -24,7 +24,7 @@ export class AnswerReaction {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date
 
-  @UpdateDateColumn({ name: 'deleted_at' })
+  @Column({ name: 'deleted_at', default: null })
   deletedAt: Date
 
   @Column()
@@ -33,7 +33,7 @@ export class AnswerReaction {
   @Column()
   answerId?: string
 
-  @Column()
+  @Column({ nullable: true })
   categoryId?: string
 
   /*
@@ -46,6 +46,6 @@ export class AnswerReaction {
   )
   answer: Answer
 
-  @ManyToOne(() => Category)
+  @ManyToOne(() => Category, { nullable: true })
   category: Category
 }

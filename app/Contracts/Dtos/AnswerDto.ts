@@ -3,13 +3,9 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateAnswerDto {
   static schema = Joi.object({
-    doubtId: Joi.string()
-      .alphanum()
-      .required(),
+    doubtId: Joi.string().required(),
 
-    content: Joi.string()
-      .alphanum()
-      .required(),
+    content: Joi.string().required(),
   })
 
   @ApiProperty()

@@ -9,5 +9,5 @@ export class KeywordRepository extends TypeOrmRepository<Doubt> {
   protected wheres: ['id', 'name', 'createdAt', 'updatedAt']
   protected relations: ['category']
 
-  protected Model = new Doubt()
+  protected Model = Doubt.name
 }

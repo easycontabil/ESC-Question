@@ -5,7 +5,7 @@ import { PipeTransform, Injectable } from '@nestjs/common'
 export class QueryParamsPipe implements PipeTransform {
   transform(value: any): ApiRequestContract {
     const apiRequest: ApiRequestContract = {
-      isInternRequest: false,
+      isInternRequest: true,
       where: {},
       orderBy: {},
       includes: [],
@@ -32,7 +32,7 @@ export class QueryParamsPipe implements PipeTransform {
       }
 
       if (includesKey && value[key]) {
-        apiRequest.includes[includesKey] = value[key]
+        apiRequest.includes.push({ relation: includesKey })
       }
     })
 

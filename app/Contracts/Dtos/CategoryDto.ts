@@ -10,13 +10,10 @@ export class CreateCategoryDto {
       .max(30)
       .required(),
     description: Joi.string()
-      .alphanum()
       .min(10)
       .max(40)
       .required(),
-    category: Joi.string()
-      .alphanum()
-      .optional(),
+    categoryId: Joi.string().optional(),
   })
 
   @ApiProperty()

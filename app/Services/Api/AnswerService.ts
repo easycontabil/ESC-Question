@@ -42,6 +42,7 @@ export class AnswerService extends GuardBaseService<any> {
 
   async createOne(dto: CreateAnswerDto) {
     const user = this.guard
+    console.log(user.id)
 
     const doubt = await this.doubtService.findOne(dto.doubtId)
 
@@ -53,8 +54,8 @@ export class AnswerService extends GuardBaseService<any> {
 
     const respostaRepetida = await this.answerRepository.getOne(null, {
       where: {
-        userId: user.id,
         doubtId: doubt.id,
+        userId: user.id,
       },
     })
 
@@ -64,11 +65,15 @@ export class AnswerService extends GuardBaseService<any> {
       )
     }
 
-    return this.answerRepository.storeOne({ doubt, content: dto.content })
+    return this.answerRepository.storeOne({
+      doubt,
+      userId: user.id,
+      content: dto.content,
+    })
   }
 
   async updateOne(id: string, dto: UpdateAnswerDto) {
-    const user = this.guard
+    const user = this.guard.user
 
     const answer = await this.findOne(id, {
       includes: [{ relation: 'answerReactions' }],

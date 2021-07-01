@@ -6,8 +6,8 @@ import { TypeOrmRepository } from '@secjs/base/repositories/TypeOrmRepository'
 @EntityRepository(Comment)
 @Ignore({ onlyFromImports: true })
 export class CommentRepository extends TypeOrmRepository<Comment> {
-  protected wheres: ['id', 'name', 'createdAt', 'updatedAt']
+  protected wheres: ['id', 'name', 'createdAt', 'updatedAt', 'deletedAt']
   protected relations: ['answer', 'comment']
 
-  protected Model = new Comment()
+  protected Model = Comment.name
 }

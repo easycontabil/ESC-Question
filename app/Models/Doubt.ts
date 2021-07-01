@@ -19,7 +19,7 @@ export class Doubt {
   @Column({ type: 'uuid' })
   userId: string
 
-  @Column()
+  @Column({ default: false, nullable: true })
   solved?: boolean
 
   @Column()
@@ -28,7 +28,7 @@ export class Doubt {
   @Column()
   description: string
 
-  @Column({ name: 'closed_at' })
+  @Column({ name: 'closed_at', nullable: true, default: null })
   closedAt: Date
 
   @CreateDateColumn({ name: 'created_at' })
@@ -37,7 +37,7 @@ export class Doubt {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date
 
-  @UpdateDateColumn({ name: 'deleted_at' })
+  @Column({ name: 'deleted_at', default: null })
   deletedAt: Date
 
   /*

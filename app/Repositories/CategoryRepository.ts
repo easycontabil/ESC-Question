@@ -9,5 +9,5 @@ export class CategoryRepository extends TypeOrmRepository<Category> {
   protected wheres: ['id', 'name', 'description', 'createdAt', 'updatedAt']
   protected relations: ['doubt', 'category', 'keywords']
 
-  protected Model = new Category()
+  protected Model = Category.name
 }

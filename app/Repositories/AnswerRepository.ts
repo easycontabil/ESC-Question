@@ -6,8 +6,16 @@ import { TypeOrmRepository } from '@secjs/base/repositories/TypeOrmRepository'
 @EntityRepository(Answer)
 @Ignore({ onlyFromImports: true })
 export class AnswerRepository extends TypeOrmRepository<Answer> {
-  protected wheres: ['id', 'solved', 'content', 'createdAt', 'updatedAt']
+  protected wheres: [
+    'id',
+    'solved',
+    'content',
+    'createdAt',
+    'updatedAt',
+    'deletedAt',
+  ]
+
   protected relations: ['doubt', 'comments', 'answerReaction']
 
-  protected Model = new Answer()
+  protected Model = Answer.name
 }

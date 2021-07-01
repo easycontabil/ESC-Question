@@ -8,8 +8,8 @@ import { TypeOrmRepository } from '@secjs/base/repositories/TypeOrmRepository'
 export class AnswerReactionRepository extends TypeOrmRepository<
   AnswerReaction
 > {
-  protected wheres: ['id', 'liked', 'createdAt', 'updatedAt']
+  protected wheres: ['id', 'liked', 'createdAt', 'updatedAt', 'deletedAt']
   protected relations: []
 
-  protected Model = new AnswerReaction()
+  protected Model = AnswerReaction.name
 }

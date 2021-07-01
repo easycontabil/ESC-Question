@@ -6,9 +6,7 @@ export class CreateDoubtDto {
     title: Joi.string()
       .alphanum()
       .required(),
-    description: Joi.string()
-      .alphanum()
-      .required(),
+    description: Joi.string().required(),
   })
 
   @ApiProperty()
