@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config'
-import { HttpService, Inject, Injectable } from '@nestjs/common'
+import { HttpException, HttpService, Inject, Injectable } from '@nestjs/common'
 
 @Injectable()
 export class GuardCollection {
@@ -11,23 +11,28 @@ export class GuardCollection {
     this.url = this.configService.get('http.services.guard.url')
   }
 
-  async example() {
-    // mount request
-    // const url = `${this.url}`
+  async me(token: string) {
+    const url = `${this.url}/auth/me`
 
     try {
-      // make request
-      // return (await this.httpService.put(url).toPromise()).data
+      return (
+        await this.httpService
+          .get(url, {
+            headers: {
+              Authorization: token,
+            },
+          })
+          .toPromise()
+      ).data.data
     } catch (error) {
-      // on error in request
-      // const response = {
-      //   isGuardError: true,
-      //   method: this.updateAccount.name,
-      //   statusCode: error.response?.status || 500,
-      //   message: error.response?.statusText || 'Internal Server Error',
-      // }
-      //
-      // throw new HttpException(response, response.statusCode)
+      const response = {
+        isGuardError: true,
+        method: this.me.name,
+        statusCode: error.response?.status || 500,
+        message: error.response?.statusText || 'Internal Server Error',
+      }
+
+      throw new HttpException(response, response.statusCode)
     }
   }
 }
