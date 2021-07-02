@@ -15,7 +15,7 @@ export class Comment {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', nullable: false })
   userId: string
 
   @Column()
@@ -29,6 +29,12 @@ export class Comment {
 
   @Column({ name: 'deleted_at', default: null })
   deletedAt: Date
+
+  @Column({ nullable: false })
+  answerId: string
+
+  @Column({ nullable: true })
+  commentId?: string
 
   /*
    * Relations

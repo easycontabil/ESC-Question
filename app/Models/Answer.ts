@@ -35,6 +35,9 @@ export class Answer {
   @Column({ name: 'deleted_at', default: null })
   deletedAt: Date
 
+  @Column({ nullable: false })
+  doubtId: string
+
   /*
    * Relations
    */
@@ -48,6 +51,7 @@ export class Answer {
   @ManyToOne(
     () => Doubt,
     doubt => doubt.answers,
+    { nullable: false },
   )
   doubt: Doubt
 

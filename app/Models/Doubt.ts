@@ -16,7 +16,7 @@ export class Doubt {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', nullable: false })
   userId: string
 
   @Column({ default: false, nullable: true })

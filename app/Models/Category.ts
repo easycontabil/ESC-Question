@@ -29,11 +29,17 @@ export class Category {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date
 
+  @Column({ nullable: true })
+  doubtId?: string
+
+  @Column({ nullable: true })
+  categoryId?: string
+
   /*
    * Relations
    */
 
-  @OneToOne(() => Category)
+  @OneToOne(() => Category, { nullable: true })
   category: Category
 
   @OneToMany(

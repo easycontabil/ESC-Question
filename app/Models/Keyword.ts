@@ -23,6 +23,9 @@ export class Keyword {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date
 
+  @Column({ nullable: true })
+  categoryId: string
+
   /*
    * Relations
    */

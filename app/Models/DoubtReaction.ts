@@ -26,6 +26,12 @@ export class DoubtReaction {
   @Column({ name: 'deleted_at', default: null })
   deletedAt: Date
 
+  @Column({ nullable: false })
+  userId?: string
+
+  @Column({ nullable: false })
+  doubtId?: string
+
   /*
    * Relations
    */

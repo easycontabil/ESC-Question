@@ -27,10 +27,10 @@ export class AnswerReaction {
   @Column({ name: 'deleted_at', default: null })
   deletedAt: Date
 
-  @Column()
+  @Column({ nullable: false })
   userId?: string
 
-  @Column()
+  @Column({ nullable: false })
   answerId?: string
 
   @Column({ nullable: true })
@@ -43,6 +43,7 @@ export class AnswerReaction {
   @ManyToOne(
     () => Answer,
     answer => answer.answerReactions,
+    { nullable: false },
   )
   answer: Answer
 
