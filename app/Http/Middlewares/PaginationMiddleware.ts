@@ -1,10 +1,23 @@
+import {
+  Inject,
+  Injectable,
+  NestMiddleware,
+  RequestMethod,
+} from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { RouteMiddleware } from 'app/Contracts/RouteMiddlewareContract'
-import { Injectable, NestMiddleware, RequestMethod } from '@nestjs/common'
 
 @Injectable()
 export class PaginationMiddleware implements NestMiddleware {
+  @Inject(ConfigService) private configService: ConfigService
+
   static get routes(): RouteMiddleware[] {
-    return [{ path: '/users', method: RequestMethod.GET }]
+    return [
+      { path: '/answers', method: RequestMethod.GET },
+      { path: '/categories', method: RequestMethod.GET },
+      { path: '/comments', method: RequestMethod.GET },
+      { path: '/doubts', method: RequestMethod.GET },
+    ]
   }
 
   use(req, res, next) {
@@ -14,6 +27,7 @@ export class PaginationMiddleware implements NestMiddleware {
     req.pagination = {
       page,
       limit,
+      resourceUrl: `${this.configService.get('app.appUrl')}${req.route.path}`,
     }
 
     next()

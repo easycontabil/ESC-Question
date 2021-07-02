@@ -22,6 +22,9 @@ export class CreateCategoryDto {
   @ApiProperty()
   description: string
 
+  @ApiProperty()
+  categoryId: string
+
   category?: Category
 }
 
