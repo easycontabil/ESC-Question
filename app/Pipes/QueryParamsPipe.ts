@@ -19,9 +19,6 @@ export class QueryParamsPipe implements PipeTransform {
       if (whereKey && value[key]) {
         apiRequest.where[whereKey] = value[key]
 
-        if (apiRequest.where[whereKey] === 'null')
-          apiRequest.where[whereKey] = null
-
         return
       }
 
@@ -32,6 +29,23 @@ export class QueryParamsPipe implements PipeTransform {
       }
 
       if (includesKey && value[key]) {
+        if (includesKey.indexOf('.') > 0) {
+          const relations = key.split('.')
+          const mainRelation = relations[0].replace('_', '')
+
+          relations.splice(
+            relations.findIndex(r => r === `_${mainRelation}`),
+            1,
+          )
+
+          apiRequest.includes.push({
+            relation: mainRelation,
+            includes: [{ relation: relations[0] }],
+          })
+
+          return
+        }
+
         apiRequest.includes.push({ relation: includesKey })
       }
     })

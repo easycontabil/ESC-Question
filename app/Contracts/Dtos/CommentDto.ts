@@ -20,9 +20,7 @@ export class CreateCommentDto {
 
 export class UpdateCommentDto {
   static schema = Joi.object({
-    content: Joi.string()
-      .alphanum()
-      .optional(),
+    content: Joi.string().optional(),
   })
 
   @ApiProperty()

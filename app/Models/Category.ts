@@ -6,7 +6,8 @@ import {
   UpdateDateColumn,
   OneToOne,
   ManyToOne,
-  OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm'
 
 import { Doubt } from './Doubt'
@@ -32,9 +33,6 @@ export class Category {
   @Column({ nullable: true })
   doubtId?: string
 
-  @Column({ nullable: true })
-  categoryId?: string
-
   /*
    * Relations
    */
@@ -42,10 +40,8 @@ export class Category {
   @OneToOne(() => Category, { nullable: true })
   category: Category
 
-  @OneToMany(
-    () => Category,
-    keywords => keywords.category,
-  )
+  @ManyToMany(() => Keyword)
+  @JoinTable()
   keywords: Keyword[]
 
   @ManyToOne(

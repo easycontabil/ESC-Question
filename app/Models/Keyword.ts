@@ -4,10 +4,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
+  // ManyToMany,
 } from 'typeorm'
 
-import { Category } from './Category'
+// import { Category } from './Category'
 
 @Entity('esc_keywords')
 export class Keyword {
@@ -23,13 +23,13 @@ export class Keyword {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date
 
-  @Column({ nullable: true })
-  categoryId: string
-
   /*
    * Relations
    */
 
-  @ManyToOne(() => Category, { nullable: true })
-  category: Category
+  // @ManyToMany(
+  //   () => Category,
+  //   category => category.keywords,
+  // )
+  // categories: Category[]
 }

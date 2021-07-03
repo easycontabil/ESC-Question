@@ -78,6 +78,15 @@ export class AnswerService extends GuardBaseService<any> {
       includes: [{ relation: 'answerReactions' }],
     })
 
+    if (dto.solved) {
+      await this.doubtService.setGuard(user).updateOne(answer.doubtId, {
+        solved: dto.solved,
+        closedAt: new Date(),
+      })
+
+      return this.answerRepository.updateOne(answer, { solved: dto.solved })
+    }
+
     if (dto.answerReaction) {
       if (answer.userId === user.id) {
         throw new BadRequestException(
@@ -99,9 +108,15 @@ export class AnswerService extends GuardBaseService<any> {
       )
 
       if (repeatedReaction) {
-        repeatedReaction.liked = dto.answerReaction.liked
+        await this.answerReactionRepository.updateOne(repeatedReaction, {
+          liked: dto.answerReaction.liked,
+        })
 
-        // await this.answerReactionRepository.save(repeatedReaction)
+        const answerIndex = answer.answerReactions.findIndex(
+          answer => answer.id === repeatedReaction.id,
+        )
+
+        answer.answerReactions.splice(answerIndex, 1)
 
         answer.answerReactions.push(repeatedReaction)
       } else {
@@ -114,6 +129,8 @@ export class AnswerService extends GuardBaseService<any> {
         answer.answerReactions.push(answerReaction)
       }
     }
+
+    delete dto.answerReaction
 
     return this.answerRepository.updateOne(answer, dto)
   }

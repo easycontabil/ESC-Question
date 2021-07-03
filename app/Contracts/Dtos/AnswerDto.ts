@@ -16,9 +16,7 @@ export class CreateAnswerDto {
 
 export class UpdateAnswerDto {
   static schema = Joi.object({
-    content: Joi.string()
-      .alphanum()
-      .optional(),
+    content: Joi.string().optional(),
     solved: Joi.boolean().optional(),
     answerReaction: Joi.object({
       liked: Joi.boolean().required(),

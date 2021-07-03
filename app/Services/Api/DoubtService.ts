@@ -11,11 +11,15 @@ import {
 import { DoubtRepository } from 'app/Repositories/DoubtRepository'
 import { ApiRequestContract, PaginationContract } from '@secjs/contracts'
 import { DoubtReactionRepository } from '../../Repositories/DoubtReactionRepository'
+import { CategoryRepository } from '../../Repositories/CategoryRepository'
 
 @Injectable()
 export class DoubtService extends GuardBaseService<any> {
   @Inject(DoubtRepository)
   private doubtRepository: DoubtRepository
+
+  @Inject(CategoryRepository)
+  private categoryRepository: CategoryRepository
 
   @Inject(DoubtReactionRepository)
   private doubtReactionRepository: DoubtReactionRepository
@@ -52,10 +56,25 @@ export class DoubtService extends GuardBaseService<any> {
       )
     }
 
+    if (dto.categories) {
+      for (const i in dto.categories) {
+        const category = await this.categoryRepository.getOne(dto.categories[i])
+
+        if (!category) {
+          throw new BadRequestException(
+            'Uma das categorias passadas não foi encontrada',
+          )
+        }
+
+        dto.categories[i] = category
+      }
+    }
+
     return this.doubtRepository.storeOne({
       title: dto.title,
       description: dto.description,
       userId: user.id,
+      categories: dto.categories,
     })
   }
 
@@ -65,6 +84,14 @@ export class DoubtService extends GuardBaseService<any> {
     const doubt = await this.findOne(id, {
       includes: [{ relation: 'doubtReactions' }],
     })
+
+    if (dto.open) {
+      return this.doubtRepository.updateOne(doubt, { closedAt: null })
+    }
+
+    if (dto.close) {
+      return this.doubtRepository.updateOne(doubt, { closedAt: new Date() })
+    }
 
     if (dto.doubtReaction) {
       if (doubt.userId === user.id) {
@@ -84,9 +111,15 @@ export class DoubtService extends GuardBaseService<any> {
       })
 
       if (repeatedReaction) {
-        repeatedReaction.liked = dto.doubtReaction.liked
+        await this.doubtReactionRepository.updateOne(repeatedReaction, {
+          liked: dto.doubtReaction.liked,
+        })
 
-        // await this.answerReactionRepository.save(repeatedReaction)
+        const doubtIndex = doubt.doubtReactions.findIndex(
+          doubt => doubt.id === repeatedReaction.id,
+        )
+
+        doubt.doubtReactions.splice(doubtIndex, 1)
 
         doubt.doubtReactions.push(repeatedReaction)
       } else {
@@ -99,6 +132,10 @@ export class DoubtService extends GuardBaseService<any> {
         doubt.doubtReactions.push(doubtReaction)
       }
     }
+
+    delete dto.open
+    delete dto.close
+    delete dto.doubtReaction
 
     return this.doubtRepository.updateOne(doubt, dto)
   }

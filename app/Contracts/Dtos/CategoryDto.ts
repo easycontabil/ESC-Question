@@ -1,11 +1,9 @@
 import * as Joi from 'joi'
-import { Category } from 'app/Models/Category'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateCategoryDto {
   static schema = Joi.object({
-    title: Joi.string()
-      .alphanum()
+    name: Joi.string()
       .min(3)
       .max(30)
       .required(),
@@ -13,7 +11,7 @@ export class CreateCategoryDto {
       .min(10)
       .max(40)
       .required(),
-    categoryId: Joi.string().optional(),
+    keywords: Joi.array().optional(),
   })
 
   @ApiProperty()
@@ -23,26 +21,20 @@ export class CreateCategoryDto {
   description: string
 
   @ApiProperty()
-  categoryId: string
-
-  category?: Category
+  keywords?: any[]
 }
 
 export class UpdateCategoryDto {
   static schema = Joi.object({
-    title: Joi.string()
-      .alphanum()
+    name: Joi.string()
       .min(3)
       .max(30)
       .optional(),
     description: Joi.string()
-      .alphanum()
       .min(10)
       .max(40)
       .optional(),
-    category: Joi.string()
-      .alphanum()
-      .optional(),
+    keywords: Joi.array().optional(),
   })
 
   @ApiProperty()
@@ -51,5 +43,6 @@ export class UpdateCategoryDto {
   @ApiProperty()
   description?: string
 
-  category?: Category
+  @ApiProperty()
+  keywords?: any[]
 }
