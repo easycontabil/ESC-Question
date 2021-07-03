@@ -42,7 +42,6 @@ export class AnswerService extends GuardBaseService<any> {
 
   async createOne(dto: CreateAnswerDto) {
     const user = this.guard
-    console.log(user.id)
 
     const doubt = await this.doubtService.findOne(dto.doubtId)
 

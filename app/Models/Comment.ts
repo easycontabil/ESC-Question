@@ -5,10 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  OneToOne,
 } from 'typeorm'
 
 import { Answer } from './Answer'
+import { Doubt } from './Doubt'
 
 @Entity('esc_comments')
 export class Comment {
@@ -30,11 +30,11 @@ export class Comment {
   @Column({ name: 'deleted_at', default: null })
   deletedAt: Date
 
-  @Column({ nullable: false })
-  answerId: string
+  @Column({ nullable: true })
+  answerId?: string
 
   @Column({ nullable: true })
-  commentId?: string
+  doubtId?: string
 
   /*
    * Relations
@@ -46,6 +46,9 @@ export class Comment {
   )
   answer: Answer
 
-  @OneToOne(() => Comment, { nullable: true })
-  comment: Comment
+  @ManyToOne(
+    () => Doubt,
+    doubt => doubt.comments,
+  )
+  doubt: Doubt
 }

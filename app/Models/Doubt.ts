@@ -10,6 +10,7 @@ import {
 import { Answer } from './Answer'
 import { Category } from './Category'
 import { DoubtReaction } from './DoubtReaction'
+import { Comment } from './Comment'
 
 @Entity('esc_doubts')
 export class Doubt {
@@ -55,6 +56,12 @@ export class Doubt {
     answer => answer.doubt,
   )
   answers: Answer[]
+
+  @OneToMany(
+    () => Comment,
+    comment => comment.doubt,
+  )
+  comments: Comment[]
 
   @OneToMany(
     () => Category,

@@ -22,7 +22,6 @@ export class DoubtService extends GuardBaseService<any> {
 
   @Options()
   async findAll(paginate: PaginationContract, options?: ApiRequestContract) {
-    console.log(options)
     return this.doubtRepository.getAll(paginate, options)
   }
 

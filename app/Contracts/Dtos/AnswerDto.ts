@@ -4,7 +4,6 @@ import { ApiProperty } from '@nestjs/swagger'
 export class CreateAnswerDto {
   static schema = Joi.object({
     doubtId: Joi.string().required(),
-
     content: Joi.string().required(),
   })
 

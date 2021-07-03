@@ -29,7 +29,10 @@ export class GuardCollection {
         isGuardError: true,
         method: this.me.name,
         statusCode: error.response?.status || 500,
-        message: error.response?.statusText || 'Internal Server Error',
+        message:
+          error.response?.statusText ||
+          error.message ||
+          'Internal Server Error',
       }
 
       throw new HttpException(response, response.statusCode)
