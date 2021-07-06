@@ -17,7 +17,20 @@ export class Answer {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ type: 'uuid' })
+  @Column({
+    type: 'varchar',
+    transformer: {
+      from(val: string) {
+        return JSON.parse(val)
+      },
+      to(val: any) {
+        return JSON.stringify(val)
+      },
+    },
+  })
+  user: any
+
+  @Column({ type: 'varchar' })
   userId: string
 
   @Column({ default: false })

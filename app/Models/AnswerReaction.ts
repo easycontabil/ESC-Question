@@ -27,8 +27,21 @@ export class AnswerReaction {
   @Column({ name: 'deleted_at', default: null })
   deletedAt: Date
 
-  @Column({ nullable: false })
-  userId?: string
+  @Column({
+    type: 'varchar',
+    transformer: {
+      from(val: string) {
+        return JSON.parse(val)
+      },
+      to(val: any) {
+        return JSON.stringify(val)
+      },
+    },
+  })
+  user: any
+
+  @Column({ type: 'varchar' })
+  userId: string
 
   @Column({ nullable: false })
   answerId?: string

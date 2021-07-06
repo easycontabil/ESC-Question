@@ -12,12 +12,12 @@ import {
 } from '@nestjs/common'
 import { CommentRepository } from 'app/Repositories/CommentRepository'
 import { ApiRequestContract, PaginationContract } from '@secjs/contracts'
-import { GuardBaseService } from '@secjs/base/services/GuardBaseService'
 import { AnswerService } from './AnswerService'
 import { DoubtService } from './DoubtService'
+import { BaseService } from '../Base/BaseService'
 
 @Injectable()
-export class CommentService extends GuardBaseService<any> {
+export class CommentService extends BaseService {
   @Inject(DoubtService)
   private doubtService: DoubtService
 
@@ -57,6 +57,7 @@ export class CommentService extends GuardBaseService<any> {
 
       return this.commentRepository.storeOne({
         answer,
+        user,
         userId: user.id,
         content: dto.content,
       })
@@ -67,6 +68,7 @@ export class CommentService extends GuardBaseService<any> {
 
       return this.commentRepository.storeOne({
         doubt,
+        user,
         userId: user.id,
         content: dto.content,
       })

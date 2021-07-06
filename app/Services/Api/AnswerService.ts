@@ -10,11 +10,11 @@ import {
 import { AnswerRepository } from 'app/Repositories/AnswerRepository'
 import { ApiRequestContract, PaginationContract } from '@secjs/contracts'
 import { AnswerReactionRepository } from '../../Repositories/AnswerReactionRepository'
-import { GuardBaseService } from '@secjs/base/services/GuardBaseService'
 import { DoubtService } from './DoubtService'
+import { BaseService } from '../Base/BaseService'
 
 @Injectable()
-export class AnswerService extends GuardBaseService<any> {
+export class AnswerService extends BaseService {
   @Inject(DoubtService)
   private doubtService: DoubtService
 
@@ -53,8 +53,8 @@ export class AnswerService extends GuardBaseService<any> {
 
     const respostaRepetida = await this.answerRepository.getOne(null, {
       where: {
-        doubtId: doubt.id,
         userId: user.id,
+        doubtId: doubt.id,
       },
     })
 
@@ -65,6 +65,7 @@ export class AnswerService extends GuardBaseService<any> {
     }
 
     return this.answerRepository.storeOne({
+      user,
       doubt,
       userId: user.id,
       content: dto.content,
@@ -72,7 +73,7 @@ export class AnswerService extends GuardBaseService<any> {
   }
 
   async updateOne(id: string, dto: UpdateAnswerDto) {
-    const user = this.guard.user
+    const user = this.guard
 
     const answer = await this.findOne(id, {
       includes: [{ relation: 'answerReactions' }],
@@ -121,6 +122,7 @@ export class AnswerService extends GuardBaseService<any> {
         answer.answerReactions.push(repeatedReaction)
       } else {
         const answerReaction = await this.answerReactionRepository.storeOne({
+          user,
           userId: user.id,
           answerId: answer.id,
           liked: dto.answerReaction.liked,

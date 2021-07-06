@@ -15,7 +15,20 @@ export class Comment {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ type: 'uuid', nullable: false })
+  @Column({
+    type: 'varchar',
+    transformer: {
+      from(val: string) {
+        return JSON.parse(val)
+      },
+      to(val: any) {
+        return JSON.stringify(val)
+      },
+    },
+  })
+  user: any
+
+  @Column({ type: 'varchar' })
   userId: string
 
   @Column()

@@ -1,6 +1,4 @@
 import { CreateDoubtDto, UpdateDoubtDto } from 'app/Contracts/Dtos/DoubtDto'
-
-import { GuardBaseService } from '@secjs/base/services/GuardBaseService'
 import { Options } from 'app/Decorators/Services/Options'
 import {
   BadRequestException,
@@ -12,9 +10,10 @@ import { DoubtRepository } from 'app/Repositories/DoubtRepository'
 import { ApiRequestContract, PaginationContract } from '@secjs/contracts'
 import { DoubtReactionRepository } from '../../Repositories/DoubtReactionRepository'
 import { CategoryRepository } from '../../Repositories/CategoryRepository'
+import { BaseService } from '../Base/BaseService'
 
 @Injectable()
-export class DoubtService extends GuardBaseService<any> {
+export class DoubtService extends BaseService {
   @Inject(DoubtRepository)
   private doubtRepository: DoubtRepository
 
@@ -73,6 +72,7 @@ export class DoubtService extends GuardBaseService<any> {
     return this.doubtRepository.storeOne({
       title: dto.title,
       description: dto.description,
+      user,
       userId: user.id,
       categories: dto.categories,
     })
@@ -124,6 +124,7 @@ export class DoubtService extends GuardBaseService<any> {
         doubt.doubtReactions.push(repeatedReaction)
       } else {
         const doubtReaction = await this.doubtReactionRepository.storeOne({
+          user,
           userId: user.id,
           doubtId: doubt.id,
           liked: dto.doubtReaction.liked,
