@@ -76,7 +76,7 @@ export class AnswerService extends BaseService {
     const user = this.guard
 
     const answer = await this.findOne(id, {
-      includes: [{ relation: 'answerReactions' }],
+      includes: [{ relation: 'comments' }, { relation: 'answerReactions' }],
     })
 
     if (dto.solved) {

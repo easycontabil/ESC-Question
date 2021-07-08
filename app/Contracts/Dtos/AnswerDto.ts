@@ -5,6 +5,7 @@ export class CreateAnswerDto {
   static schema = Joi.object({
     doubtId: Joi.string().required(),
     content: Joi.string().required(),
+    solved: Joi.boolean().optional(),
   })
 
   @ApiProperty()
