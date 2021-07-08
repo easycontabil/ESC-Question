@@ -82,7 +82,13 @@ export class DoubtService extends BaseService {
     const user = this.guard
 
     const doubt = await this.findOne(id, {
-      includes: [{ relation: 'doubtReactions' }],
+      includes: [
+        { relation: 'doubtReactions' },
+        {
+          relation: 'answers',
+          includes: [{ relation: 'answerReactions' }, { relation: 'comments' }],
+        },
+      ],
     })
 
     if (dto.open) {
