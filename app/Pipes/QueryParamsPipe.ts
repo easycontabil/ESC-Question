@@ -29,24 +29,33 @@ export class QueryParamsPipe implements PipeTransform {
       }
 
       if (includesKey && value[key]) {
-        if (includesKey.indexOf('.') > 0) {
-          const relations = key.split('.')
-          const mainRelation = relations[0].replace('_', '')
+        // if (includesKey.indexOf('.') > 0) {
+        //   const relations = key.split('.')
+        //   const mainRelation = relations[0].replace('_', '')
+        //
+        //   relations.splice(
+        //     relations.findIndex(r => r === `_${mainRelation}`),
+        //     1,
+        //   )
+        //
+        //   apiRequest.includes.push({
+        //     relation: mainRelation,
+        //     includes: [{ relation: relations[0] }],
+        //   })
+        //
+        //   return
+        // }
+        const arraySubIncludes = JSON.parse(value[key])
 
-          relations.splice(
-            relations.findIndex(r => r === `_${mainRelation}`),
-            1,
-          )
+        const include = { relation: includesKey, includes: [] }
 
-          apiRequest.includes.push({
-            relation: mainRelation,
-            includes: [{ relation: relations[0] }],
-          })
+        arraySubIncludes.forEach(subRelation => {
+          include.includes.push({ relation: subRelation })
+        })
 
-          return
-        }
+        if (!include.includes.length) delete include.includes
 
-        apiRequest.includes.push({ relation: includesKey })
+        apiRequest.includes.push(include)
       }
     })
 
