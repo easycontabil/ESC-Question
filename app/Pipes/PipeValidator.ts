@@ -10,7 +10,10 @@ export class PipeValidator<T> implements PipeValidatorContract {
   }
 
   async validate(schema: Schema, value: Partial<T>) {
-    const { error } = schema.validate(value, { abortEarly: false })
+    const { error } = schema.validate(value, {
+      abortEarly: false,
+      allowUnknown: true,
+    })
 
     if (error) {
       const messages = []
