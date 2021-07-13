@@ -5,30 +5,19 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
 } from 'typeorm'
 
 import { Answer } from './Answer'
 import { Category } from './Category'
 import { DoubtReaction } from './DoubtReaction'
 import { Comment } from './Comment'
+import { User } from './User'
 
 @Entity('esc_doubts')
 export class Doubt {
   @PrimaryGeneratedColumn('uuid')
   id: string
-
-  @Column({
-    type: 'varchar',
-    transformer: {
-      from(val: string) {
-        return JSON.parse(val)
-      },
-      to(val: any) {
-        return JSON.stringify(val)
-      },
-    },
-  })
-  user: any
 
   @Column({ type: 'varchar' })
   userId: string
@@ -57,6 +46,13 @@ export class Doubt {
   /*
    * Relations
    */
+
+  @ManyToOne(
+    () => User,
+    user => user.answerReactions,
+    { nullable: false },
+  )
+  user: User
 
   @OneToMany(
     () => DoubtReaction,

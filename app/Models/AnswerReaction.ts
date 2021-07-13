@@ -9,6 +9,7 @@ import {
 
 import { Answer } from './Answer'
 import { Category } from './Category'
+import { User } from './User'
 
 @Entity('esc_answer_reactions')
 export class AnswerReaction {
@@ -27,24 +28,11 @@ export class AnswerReaction {
   @Column({ name: 'deleted_at', default: null })
   deletedAt: Date
 
-  @Column({
-    type: 'varchar',
-    transformer: {
-      from(val: string) {
-        return JSON.parse(val)
-      },
-      to(val: any) {
-        return JSON.stringify(val)
-      },
-    },
-  })
-  user: any
-
-  @Column({ type: 'varchar' })
+  @Column({ nullable: false })
   userId: string
 
   @Column({ nullable: false })
-  answerId?: string
+  answerId: string
 
   @Column({ nullable: true })
   categoryId?: string
@@ -52,6 +40,13 @@ export class AnswerReaction {
   /*
    * Relations
    */
+
+  @ManyToOne(
+    () => User,
+    user => user.answerReactions,
+    { nullable: false },
+  )
+  user: User
 
   @ManyToOne(
     () => Answer,

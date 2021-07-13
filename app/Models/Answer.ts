@@ -11,27 +11,12 @@ import {
 import { Doubt } from './Doubt'
 import { Comment } from './Comment'
 import { AnswerReaction } from './AnswerReaction'
+import { User } from './User'
 
 @Entity('esc_answers')
 export class Answer {
   @PrimaryGeneratedColumn('uuid')
   id: string
-
-  @Column({
-    type: 'varchar',
-    transformer: {
-      from(val: string) {
-        return JSON.parse(val)
-      },
-      to(val: any) {
-        return JSON.stringify(val)
-      },
-    },
-  })
-  user: any
-
-  @Column({ type: 'varchar' })
-  userId: string
 
   @Column({ default: false })
   solved?: boolean
@@ -50,6 +35,9 @@ export class Answer {
 
   @Column({ nullable: false })
   doubtId: string
+
+  @Column()
+  userId: string
 
   /*
    * Relations
@@ -73,4 +61,11 @@ export class Answer {
     comment => comment.answer,
   )
   comments: Comment[]
+
+  @ManyToOne(
+    () => User,
+    user => user.answers,
+    { nullable: false },
+  )
+  user: User
 }

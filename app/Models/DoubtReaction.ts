@@ -8,6 +8,7 @@ import {
 } from 'typeorm'
 
 import { Doubt } from './Doubt'
+import { User } from './User'
 
 @Entity('esc_doubt_reactions')
 export class DoubtReaction {
@@ -26,19 +27,6 @@ export class DoubtReaction {
   @Column({ name: 'deleted_at', default: null })
   deletedAt: Date
 
-  @Column({
-    type: 'varchar',
-    transformer: {
-      from(val: string) {
-        return JSON.parse(val)
-      },
-      to(val: any) {
-        return JSON.stringify(val)
-      },
-    },
-  })
-  user: any
-
   @Column({ type: 'varchar' })
   userId: string
 
@@ -54,4 +42,11 @@ export class DoubtReaction {
     doubt => doubt.doubtReactions,
   )
   doubt: Doubt
+
+  @ManyToOne(
+    () => User,
+    user => user.answerReactions,
+    { nullable: false },
+  )
+  user: User
 }

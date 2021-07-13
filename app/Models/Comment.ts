@@ -9,24 +9,12 @@ import {
 
 import { Answer } from './Answer'
 import { Doubt } from './Doubt'
+import { User } from './User'
 
 @Entity('esc_comments')
 export class Comment {
   @PrimaryGeneratedColumn('uuid')
   id: string
-
-  @Column({
-    type: 'varchar',
-    transformer: {
-      from(val: string) {
-        return JSON.parse(val)
-      },
-      to(val: any) {
-        return JSON.stringify(val)
-      },
-    },
-  })
-  user: any
 
   @Column({ type: 'varchar' })
   userId: string
@@ -64,4 +52,11 @@ export class Comment {
     doubt => doubt.comments,
   )
   doubt: Doubt
+
+  @ManyToOne(
+    () => User,
+    user => user.comments,
+    { nullable: false },
+  )
+  user: User
 }

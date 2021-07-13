@@ -83,6 +83,7 @@ export class DoubtService extends BaseService {
 
     const doubt = await this.findOne(id, {
       includes: [
+        { relation: 'user' },
         { relation: 'doubtReactions' },
         {
           relation: 'answers',

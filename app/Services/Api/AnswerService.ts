@@ -12,11 +12,19 @@ import { ApiRequestContract, PaginationContract } from '@secjs/contracts'
 import { AnswerReactionRepository } from '../../Repositories/AnswerReactionRepository'
 import { DoubtService } from './DoubtService'
 import { BaseService } from '../Base/BaseService'
+import { GuardCollection } from '../Collections/GuardCollection'
+import { UserService } from './UserService'
 
 @Injectable()
 export class AnswerService extends BaseService {
   @Inject(DoubtService)
   private doubtService: DoubtService
+
+  @Inject(UserService)
+  private userService: UserService
+
+  @Inject(GuardCollection)
+  private guardCollection: GuardCollection
 
   @Inject(AnswerRepository)
   private answerRepository: AnswerRepository
@@ -76,13 +84,29 @@ export class AnswerService extends BaseService {
     const user = this.guard
 
     const answer = await this.findOne(id, {
-      includes: [{ relation: 'comments' }, { relation: 'answerReactions' }],
+      includes: [
+        { relation: 'user' },
+        { relation: 'comments' },
+        { relation: 'answerReactions' },
+      ],
     })
 
     if (dto.solved) {
-      await this.doubtService.setGuard(user).updateOne(answer.doubtId, {
-        solved: dto.solved,
-        closedAt: new Date(),
+      const doubt = await this.doubtService
+        .setGuard(user)
+        .updateOne(answer.doubtId, {
+          solved: dto.solved,
+          closedAt: new Date(),
+        })
+
+      // pontos dono duvida
+      await this.userService.updateOne(doubt.user, {
+        points: 10,
+      })
+
+      // pontos dono resposta
+      await this.userService.updateOne(answer.user, {
+        points: 20,
       })
 
       return this.answerRepository.updateOne(answer, { solved: dto.solved })
@@ -123,7 +147,6 @@ export class AnswerService extends BaseService {
       } else {
         const answerReaction = await this.answerReactionRepository.storeOne({
           user,
-          userId: user.id,
           answerId: answer.id,
           liked: dto.answerReaction.liked,
         })
