@@ -15,14 +15,22 @@ import { ApiRequestContract, PaginationContract } from '@secjs/contracts'
 import { AnswerService } from './AnswerService'
 import { DoubtService } from './DoubtService'
 import { BaseService } from '../Base/BaseService'
+import { NotificationService } from './NotificationService'
+import { UserService } from './UserService'
 
 @Injectable()
 export class CommentService extends BaseService {
   @Inject(DoubtService)
   private doubtService: DoubtService
 
+  @Inject(NotificationService)
+  private notificationService: NotificationService
+
   @Inject(AnswerService)
   private answerService: AnswerService
+
+  @Inject(UserService)
+  private userService: UserService
 
   @Inject(CommentRepository)
   private commentRepository: CommentRepository
@@ -54,6 +62,13 @@ export class CommentService extends BaseService {
 
     if (dto.answerId) {
       const answer = await this.answerService.findOne(dto.answerId)
+
+      this.notificationService.createOne({
+        title: `@${user.email} COMENTOU NA SUA RESPOSTA`,
+        content: `O usuário ${user.name} comentou na sua resposta`,
+        user: await this.userService.findOne(answer.userId),
+        type: 'warn',
+      })
 
       return this.commentRepository.storeOne({
         answer,

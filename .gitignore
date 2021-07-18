@@ -121,3 +121,6 @@ dist
 .env
 .env.testing
 .env.production
+
+manifest
+.github/k8s/*

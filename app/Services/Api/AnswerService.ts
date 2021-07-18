@@ -14,6 +14,7 @@ import { DoubtService } from './DoubtService'
 import { BaseService } from '../Base/BaseService'
 import { GuardCollection } from '../Collections/GuardCollection'
 import { UserService } from './UserService'
+import { NotificationService } from './NotificationService'
 
 @Injectable()
 export class AnswerService extends BaseService {
@@ -28,6 +29,9 @@ export class AnswerService extends BaseService {
 
   @Inject(AnswerRepository)
   private answerRepository: AnswerRepository
+
+  @Inject(NotificationService)
+  private notificationService: NotificationService
 
   @Inject(AnswerReactionRepository)
   private answerReactionRepository: AnswerReactionRepository
@@ -72,6 +76,22 @@ export class AnswerService extends BaseService {
       )
     }
 
+    this.notificationService.createOne({
+      title: `VOCÊ RESPONDEU UMA DÚVIDA`,
+      content: `Uma nova resposta foi criada`,
+      user,
+      type: 'warn',
+    })
+
+    this.notificationService.createOne({
+      title: `@${user.email} RESPONDEU SUA DÚVIDA`,
+      content: `O usuário ${user.name} respondeu a sua dúvida`,
+      user: await this.userService.findOne(doubt.userId),
+      type: 'warn',
+    })
+
+    this.userService.updateOne(user.id, { nmrRespostas: user.nmrRespostas + 1 })
+
     return this.answerRepository.storeOne({
       user,
       doubt,
@@ -86,8 +106,8 @@ export class AnswerService extends BaseService {
     const answer = await this.findOne(id, {
       includes: [
         { relation: 'user' },
-        { relation: 'comments' },
-        { relation: 'answerReactions' },
+        { relation: 'comments', includes: [{ relation: 'user' }] },
+        { relation: 'answerReactions', includes: [{ relation: 'user' }] },
       ],
     })
 
@@ -96,7 +116,6 @@ export class AnswerService extends BaseService {
         .setGuard(user)
         .updateOne(answer.doubtId, {
           solved: dto.solved,
-          closedAt: new Date(),
         })
 
       // pontos dono duvida
@@ -107,6 +126,22 @@ export class AnswerService extends BaseService {
       // pontos dono resposta
       await this.userService.updateOne(answer.user, {
         points: 20,
+      })
+
+      const doubtUser = await this.userService.findOne(doubt.userId)
+
+      this.notificationService.createOne({
+        title: `@${user.email} RESOLVEU A SUA DÚVIDA`,
+        content: `O usuário ${user.name} resolveu a sua dúvida`,
+        user: doubtUser,
+        type: 'success',
+      })
+
+      this.notificationService.createOne({
+        title: `VOCÊ RESOLVEU UMA DÚVIDA`,
+        content: `Você resolveu a dúvida do usuário ${doubtUser.name}`,
+        user,
+        type: 'success',
       })
 
       return this.answerRepository.updateOne(answer, { solved: dto.solved })
@@ -153,6 +188,17 @@ export class AnswerService extends BaseService {
 
         answer.answerReactions.push(answerReaction)
       }
+
+      this.notificationService.createOne({
+        title: `@${user.email} ${
+          dto.answerReaction.liked ? 'CURTIU' : 'NÃO CURTIU'
+        } SUA RESPOSTA`,
+        content: `O usuário ${user.name} ${
+          dto.answerReaction.liked ? 'curtiu' : 'não curtiu'
+        } a sua resposta`,
+        user: await this.userService.findOne(answer.userId),
+        type: dto.answerReaction.liked ? 'success' : 'error',
+      })
     }
 
     delete dto.answerReaction

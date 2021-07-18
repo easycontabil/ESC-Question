@@ -11,14 +11,22 @@ import { ApiRequestContract, PaginationContract } from '@secjs/contracts'
 import { DoubtReactionRepository } from '../../Repositories/DoubtReactionRepository'
 import { CategoryRepository } from '../../Repositories/CategoryRepository'
 import { BaseService } from '../Base/BaseService'
+import { NotificationService } from './NotificationService'
+import { UserService } from './UserService'
 
 @Injectable()
 export class DoubtService extends BaseService {
   @Inject(DoubtRepository)
   private doubtRepository: DoubtRepository
 
+  @Inject(UserService)
+  private userService: UserService
+
   @Inject(CategoryRepository)
   private categoryRepository: CategoryRepository
+
+  @Inject(NotificationService)
+  private notificationService: NotificationService
 
   @Inject(DoubtReactionRepository)
   private doubtReactionRepository: DoubtReactionRepository
@@ -69,6 +77,15 @@ export class DoubtService extends BaseService {
       }
     }
 
+    this.notificationService.createOne({
+      user,
+      title: `VOCÊ CRIOU UMA NOVA DÚVIDA`,
+      content: `Uma nova dúvida foi criada na sua conta`,
+      type: 'warn',
+    })
+
+    this.userService.updateOne(user.id, { nmrDuvidas: user.nmrDuvidas + 1 })
+
     return this.doubtRepository.storeOne({
       title: dto.title,
       description: dto.description,
@@ -84,13 +101,33 @@ export class DoubtService extends BaseService {
     const doubt = await this.findOne(id, {
       includes: [
         { relation: 'user' },
-        { relation: 'doubtReactions' },
+        { relation: 'doubtReactions', includes: [{ relation: 'user' }] },
         {
           relation: 'answers',
-          includes: [{ relation: 'answerReactions' }, { relation: 'comments' }],
+          includes: [
+            { relation: 'answerReactions', includes: [{ relation: 'user' }] },
+            { relation: 'comments', includes: [{ relation: 'user' }] },
+          ],
         },
       ],
     })
+
+    if (dto.solved) {
+      await this.userService.updateOne(doubt.user.id, {
+        nmrResolucoes: doubt.user.nmrResolucoes + 1,
+      })
+
+      await this.notificationService.createOne({
+        title: `VOCÊ RESOLVEU A SUA PRÓPRIA DÚVIDA`,
+        content: `Você marcou sua dúvida como resolvida`,
+        user: await this.userService.findOne(doubt.userId),
+        type: 'success',
+      })
+
+      return this.doubtRepository.updateOne(doubt, {
+        solved: dto.solved,
+      })
+    }
 
     if (dto.open) {
       return this.doubtRepository.updateOne(doubt, { closedAt: null })
@@ -139,6 +176,17 @@ export class DoubtService extends BaseService {
 
         doubt.doubtReactions.push(doubtReaction)
       }
+
+      this.notificationService.createOne({
+        title: `@${user.email} ${
+          dto.doubtReaction.liked ? 'CURTIU' : 'NÃO CURTIU'
+        } SUA DÚVIDA`,
+        content: `O usuário ${user.name} ${
+          dto.doubtReaction.liked ? 'curtiu' : 'não curtiu'
+        } a sua dúvida`,
+        user: doubt.user,
+        type: dto.doubtReaction.liked ? 'success' : 'error',
+      })
     }
 
     delete dto.open

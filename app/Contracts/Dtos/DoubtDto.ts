@@ -27,6 +27,7 @@ export class UpdateDoubtDto {
     }).optional(),
     open: Joi.boolean().optional(),
     close: Joi.boolean().optional(),
+    solved: Joi.boolean().optional(),
   })
 
   @ApiProperty()
@@ -52,6 +53,8 @@ export class UpdateDoubtDto {
   @ApiProperty()
   close?: boolean
 
+  @ApiProperty()
   solved?: boolean
+
   closedAt?: Date
 }

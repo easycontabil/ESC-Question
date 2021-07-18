@@ -13,6 +13,7 @@ import { Doubt } from './Doubt'
 import { AnswerReaction } from './AnswerReaction'
 import { DoubtReaction } from './DoubtReaction'
 import { Comment } from './Comment'
+import { Notification } from './Notification'
 
 @Entity('esc_users')
 export class User {
@@ -49,11 +50,26 @@ export class User {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date
 
+  @Column({ default: 0 })
+  nmrDuvidas: number
+
+  @Column({ default: 0 })
+  nmrRespostas: number
+
+  @Column({ default: 0 })
+  nmrResolucoes: number
+
   @OneToMany(
     () => UserToken,
     token => token.user,
   )
   tokens: UserToken[]
+
+  @OneToMany(
+    () => Notification,
+    notification => notification.user,
+  )
+  notifications: Notification[]
 
   @OneToMany(
     () => Comment,
