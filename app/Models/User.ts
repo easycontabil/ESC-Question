@@ -14,6 +14,7 @@ import { AnswerReaction } from './AnswerReaction'
 import { DoubtReaction } from './DoubtReaction'
 import { Comment } from './Comment'
 import { Notification } from './Notification'
+import Env from '@secjs/env'
 
 @Entity('esc_users')
 export class User {
@@ -32,7 +33,9 @@ export class User {
   @Column({ default: 0 })
   points: number
 
-  @Column({ default: 'http://127.0.0.1:3000/grd/statics/default.png' })
+  @Column({
+    default: `${Env('APP_URL', 'http://127.0.0.1')}/grd/statics/default.png`,
+  })
   image: string
 
   @Column({ enum: ['accountant', 'customer', 'admin'], default: 'customer' })
